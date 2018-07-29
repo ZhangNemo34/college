@@ -172,6 +172,14 @@ Route::group(array('prefix'=>'/','before'=>'auth.Ui|auth.token|api.csrf'),functi
     Route::post('/classes/delete/{id}','ClassesController@delete');
 	Route::post('/classes/{id}','ClassesController@edit');
 
+    //Class Rooms
+    Route::get('/classrooms','DashboardController@index');
+    Route::get('/classrooms/listAll','ClassRoomsController@listAll');
+    Route::post('/classrooms','ClassRoomsController@create');
+    Route::get('/classrooms/{id}','ClassRoomsController@fetch');
+    Route::post('/classrooms/delete/{id}','ClassRoomsController@delete');
+    Route::post('/classrooms/{id}','ClassRoomsController@edit');
+
     //Sections
 	Route::get('/sections','DashboardController@index');
 	Route::get('/sections/listAll','sectionsController@listAll');

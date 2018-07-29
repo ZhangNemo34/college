@@ -161,6 +161,7 @@
                   if(!in_array($users->role, $value['permissions'])){
                       continue;
                   }
+
                   if(isset($performPermScan) AND isset($value['cusPerm']) AND $value['cusPerm'] != ""){
                       if(!in_array($value['cusPerm'],$userPerm)){
                           continue;

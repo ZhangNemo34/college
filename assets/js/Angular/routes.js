@@ -51,6 +51,11 @@ schoex.config(function($routeProvider,$locationProvider) {
       controller  : 'classesController'
     })
 
+    .when('/classrooms', {
+        templateUrl : 'templates/classRooms.html',
+        controller  : 'classRoomsController'
+    })
+
     .when('/sections', {
       templateUrl : 'templates/sections.html',
       controller  : 'sectionsController'
