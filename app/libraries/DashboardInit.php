@@ -72,7 +72,7 @@ class DashboardInit {
 									),
 
 									"transportations"=>array("title"=>"Transportation","url"=>URL::to('#/transports'),"icon"=>"fa fa-bus","activated"=>"transportAct","cusPerm"=>"Transportation","permissions"=>array('admin','teacher','student','parent') ),
-
+                                    "classrooms"=>array("title"=>"classrooms","url"=>URL::to('#/classrooms'),"icon"=>"fa fa-university","activated"=>"eventsAct","permissions"=>array('admin') ),
 									"classes"=>array("title"=>"classes","url"=>URL::to('#/classes'),"icon"=>"fa fa-sitemap","activated"=>"eventsAct","cusPerm"=>"classes","permissions"=>array('admin') ),
 									
 									//"classes"=>array("title"=>"classes","icon"=>"fa fa-sitemap","cusPerm"=>"classes","permissions"=>array('admin'),
