@@ -347,11 +347,13 @@ schoex.controller('classesController', function(dataFactory,$rootScope,$scope) {
   }
 });
 
-schoex.controller('classRoomsController', function(dataFactory,$rootScope,$scope) {
+schoex.controller('classRoomsController', function(dataFactory,$rootScope,$scope,$filter) {
     $scope.classes = {};
     $scope.teachers = {};
     $scope.dormitory = {};
-    $scope.subject = {};
+    $scope.subjects = {};
+    $scope.students = {};
+    $scope.testing = {};
     $scope.views = {};
     $scope.views.list = true;
     $scope.feeTypes = {};
@@ -359,13 +361,23 @@ schoex.controller('classRoomsController', function(dataFactory,$rootScope,$scope
 
     dataFactory.httpRequest('classrooms/listAll').then(function(data) {
         $scope.classes = data.classes;
-        $scope.teachers = data.teachers;
         $scope.dormitory = data.dormitory;
-        $scope.subject = data.subject;
         showHideLoad(true);
     });
 
-    $scope.addClass = function(){
+    $scope.updatedClass = function(classId) {
+        if (typeof classId == 'undefined')
+            return [];
+
+        $class = $scope.classes.find(x => x.id == classId);
+
+        $scope.subjects = $class.classSubjects;
+        $scope.students = $class.classStudents;
+        $scope.teachers = $class.classTeachers;
+        //$scope.dormitory = $class.classDormitory;
+    };
+
+    $scope.addClassRoom = function(){
         showHideLoad();
         dataFactory.httpRequest('feeTypes/listAll').then(function(data) {
             $scope.feeTypes = data;

@@ -22,9 +22,10 @@ class ClassRoomsController extends \BaseController {
 	{
 		$toReturn = array();
 		$teachers = User::where('role','teacher')->get()->toArray();
+        $toReturn['students'] = User::where('role', 'student')->get()->toArray();
 		$toReturn['dormitory'] =  dormitories::get()->toArray();
 
-		$toReturn['subject'] = array();
+		$toReturn['subjects'] = array();
 		$subjects =  subject::get();
 		foreach ($subjects as $value) {
 		    $toReturn['subject'][$value->id] = $value->subjectTitle;
@@ -53,20 +54,10 @@ class ClassRoomsController extends \BaseController {
 
 		while (list($key, $class) = each($classes)) {
 			$toReturn['classes'][$key] = $class;
-			$toReturn['classes'][$key]->classSubjects = json_decode($toReturn['classes'][$key]->classSubjects);
-			if($toReturn['classes'][$key]->classTeacher != ""){
-				$toReturn['classes'][$key]->classTeacher = json_decode($toReturn['classes'][$key]->classTeacher,true);
-				if(is_array($toReturn['classes'][$key]->classTeacher)){
-					while (list($teacherKey, $teacherID) = each($toReturn['classes'][$key]->classTeacher)) {
-						if(isset($toReturn['teachers'][$teacherID]['fullName'])){
-							$toReturn['classes'][$key]->classTeacher[$teacherKey] = $toReturn['teachers'][$teacherID]['fullName'];
-						}else{
-							unset($toReturn['classes'][$key]->classTeacher[$teacherKey]) ;
-						}
-					}
-					$toReturn['classes'][$key]->classTeacher = implode($toReturn['classes'][$key]->classTeacher, ", ");
-				}
-			}
+            $toReturn['classes'][$key]->classSubjects = subject::whereIn('id',json_decode($toReturn['classes'][$key]->classSubjects))->get()->toArray();
+            $toReturn['classes'][$key]->classStudents = User::where('role', 'student')->where('studentClass', $class->id)->get()->toArray();
+            $toReturn['classes'][$key]->classTeachers = User::where('role', 'teacher')->whereIn('id', json_decode($toReturn['classes'][$key]->classTeacher))->get()->toArray();
+            $toReturn['classes'][$key]->classDormitory = dormitories::where('id', $toReturn['classes'][$key]->dormitory)->get()->toArray();
 		}
 
 		return $toReturn;
