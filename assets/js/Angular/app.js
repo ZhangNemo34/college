@@ -419,6 +419,7 @@ schoex.controller('classRoomsController', function(dataFactory,$rootScope,$scope
         showHideLoad();
         dataFactory.httpRequest('classrooms/'+id).then(function(data) {
             $scope.form = data;
+            $scope.updatedClass(data.classes);
             $scope.changeView('edit');
             showHideLoad(true);
         });
@@ -429,7 +430,7 @@ schoex.controller('classRoomsController', function(dataFactory,$rootScope,$scope
         dataFactory.httpRequest('classrooms/'+$scope.form.id,'POST',{},$scope.form).then(function(data) {
             response = apiResponse(data,'edit');
             if(data.status == "success"){
-                $scope.classes = apiModifyTable($scope.classes,response.id,response);
+                $scope.classrooms = apiModifyTable($scope.classrooms,response.id,response);
                 $scope.changeView('list');
             }
             showHideLoad(true);

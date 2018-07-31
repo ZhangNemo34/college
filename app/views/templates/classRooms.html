@@ -29,22 +29,22 @@
               <tr ng-repeat="classroom in classrooms | filter:searchText">
                   <td>{{classroom.classRoomName}}</td>
                   <td>
-                      <span ng-repeat="class in classroom.classes">{{class.className}}<br/></span>
+                      <span ng-repeat="class in classroom.associatedClasses">{{class.className}}<br/></span>
                   </td>
                   <td>
-                      <span ng-repeat="subject in classroom.subjects">{{subject.subjectTitle}}<br/></span>
+                      <span ng-repeat="subject in classroom.associatedSubjects">{{subject.subjectTitle}}<br/></span>
                   </td>
                   <td>
-                      <span ng-repeat="student in classroom.students">{{student.fullName}}<br/></span>
+                      <span ng-repeat="student in classroom.associatedStudents">{{student.fullName}}<br/></span>
                   </td>
                   <td>
-                      <span ng-repeat="teacher in classroom.teachers">{{teacher.fullName}}<br/></span>
+                      <span ng-repeat="teacher in classroom.associatedTeachers">{{teacher.fullName}}<br/></span>
                   </td>
                   <td>
-                      <span ng-repeat="dorm in classroom.dormitory">{{dorm.dormitory}}<br/></span>
+                      <span ng-repeat="dorm in classroom.associatedDormitory">{{dorm.dormitory}}<br/></span>
                   </td>
                   <td>
-                    <a ng-click="edit(class.id)" type="button" class="btn btn-info btn-flat" title="{{phrase.Edit}}" tooltip><i class="fa fa-pencil"></i></a>
+                    <a ng-click="edit(classroom.id)" type="button" class="btn btn-info btn-flat" title="{{phrase.Edit}}" tooltip><i class="fa fa-pencil"></i></a>
                     <a ng-click="remove(classroom,$index)" type="button" class="btn btn-danger btn-flat" title="{{phrase.Remove}}" tooltip><i class="fa fa-trash-o"></i></a>
                   </td>
               </tr>
@@ -128,43 +128,65 @@
   <a ng-click="changeView('list')" class="floatRTL btn btn-danger btn-flat pull-right marginBottom15">{{phrase.cancelEdit}}</a>
   <div class="box col-xs-12">
     <div class="box-header">
-        <h3 class="box-title">{{phrase.editClass}}</h3>
+        <h3 class="box-title">{{phrase.editClassRoom}}</h3>
+        <div class="box-tools">
+            <div class="input-group">
+                <input type="text" name="table_search" ng-model="searchStudent" placeholder="{{phrase.SearchStudent}}" class="form-control input-sm">
+                <span class="input-group-addon"><i class="fa fa-search"></i></span>
+            </div>
+        </div>
     </div>
     <div class="box-body table-responsive">
       <form class="form-horizontal" name="editDorm" role="form" ng-submit="saveEdit()" novalidate>
-        <div class="form-group" ng-class="{'has-error': editDorm.classNamee.$invalid}">
-          <label for="inputEmail3" class="col-sm-2 control-label">{{phrase.className}} * </label>
+        <div class="form-group" ng-class="{'has-error': editDorm.classRoomName.$invalid}">
+          <label class="col-sm-2 control-label">{{phrase.classRoomName}} * </label>
           <div class="col-sm-10">
-            <input type="text" name="classNamee" ng-model="form.className" class="form-control" required placeholder="{{phrase.className}}">
+              <input type="text" name="classRoomName" ng-model="form.classRoomName" class="form-control" required placeholder="{{phrase.classRoomName}}">
           </div>
         </div>
-        <div class="form-group" ng-class="{'has-error': editDorm.classTeacher.$invalid}">
-          <label for="inputPassword3" class="col-sm-2 control-label">{{phrase.classTeacher}} *</label>
+        <div class="form-group" ng-class="{'has-error': editDorm.class.$invalid}">
+          <label class="col-sm-2 control-label">{{phrase.class}} *</label>
           <div class="col-sm-10">
-            <select class="form-control" ng-model="form.classTeacher" name="classTeacher" multiple required>
-              <option ng-repeat="teacher in teachers" value="{{teacher.id}}">{{teacher.fullName}}</option>
-            </select>
+              <select class="form-control" ng-model="form.classes" name="class" ng-change="updatedClass(form.classes)" required>
+                  <option ng-repeat="class in classes" value="{{class.id}}" ng-selected="form.classes.indexOf(class.id) > -1">{{class.className}}</option>
+              </select>
           </div>
         </div>
-        <div class="form-group" ng-class="{'has-error': editDorm.classSubjects.$invalid}">
-          <label for="inputPassword3" class="col-sm-2 control-label">{{phrase.associatedSubjects}} *</label>
+        <div class="form-group" ng-class="{'has-error': editDorm.subjects.$invalid}">
+          <label class="col-sm-2 control-label">{{phrase.associatedSubjects}} *</label>
           <div class="col-sm-10">
-            <select class="form-control" ng-model="form.classSubjects" name="classSubjects" multiple required>
-              <option ng-repeat="(key, value) in subject" value="{{key}}">{{value}}</option>
-            </select>
+              <select class="form-control" ng-model="form.subjects" name="subjects" multiple required>
+                  <option ng-if="subjects" ng-repeat="subject in subjects" ng-selected="form.subjects.indexOf(subject.id) > -1" value="{{subject.id}}">{{subject.subjectTitle}}</option>
+              </select>
+          </div>
+        </div>
+        <div class="form-group" ng-class="{'has-error': editDorm.students.$invalid}">
+          <label class="col-sm-2 control-label">{{phrase.associatedStudents}} *</label>
+          <div class="col-sm-10">
+              <select class="form-control" ng-model="form.students" name="students" multiple required>
+                  <option ng-if="students" ng-repeat="student in students | filter:searchStudent" ng-selected="form.students.indexOf(student.id) > -1" value="{{student.id}}">{{student.fullName}}</option>
+              </select>
+          </div>
+        </div>
+        <div class="form-group" ng-class="{'has-error': editDorm.teachers.$invalid}">
+          <label class="col-sm-2 control-label">{{phrase.associatedTeachers}} *</label>
+          <div class="col-sm-10">
+              <select class="form-control" ng-model="form.teachers" name="teachers" multiple required>
+                  <option ng-if="teachers" ng-repeat="teacher in teachers" ng-selected="form.teachers.indexOf(teacher.id) > -1" value="{{teacher.id}}">{{teacher.fullName}}</option>
+              </select>
           </div>
         </div>
         <div class="form-group">
-          <label for="inputPassword3" class="col-sm-2 control-label">{{phrase.classDorm}}</label>
+          <label class="col-sm-2 control-label">{{phrase.classDorm}}</label>
           <div class="col-sm-10">
-            <select class="form-control" ng-model="form.dormitoryId" name="dormitoryId">
-              <option ng-repeat="dormitoryOne in dormitory" value="{{dormitoryOne.id}}">{{dormitoryOne.dormitory}}</option>
-            </select>
+              <select class="form-control" ng-model="form.dormitory" name="dormitory">
+                  <option ng-repeat="dorm in dormitory" value="{{dorm.id}}" ng-selected="form.dormitory.indexOf(dorm.id) > -1">{{dorm.dormitory}}</option>
+              </select>
           </div>
         </div>
         <div class="form-group">
           <div class="col-sm-offset-2 col-sm-10">
-            <button type="submit" class="btn btn-default" ng-disabled="editDorm.$invalid">{{phrase.editClass}}</button>
+            <button type="submit" class="btn btn-default" ng-disabled="editDorm.$invalid">{{phrase.editClassRoom}}</button>
           </div>
         </div>
       </form>

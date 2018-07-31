@@ -25,11 +25,11 @@ class ClassRoomsController extends \BaseController {
 		$toReturn['classrooms'] = array();
 		$classrooms = classrooms::get()->toArray();
         while (list($key, $classroom) = each($classrooms)) {
-            $classroom['classes'] = classes::where('id', $classroom['classes'])->get()->toArray();
-            $classroom['subjects'] = subject::whereIn('id',json_decode($classroom['subjects']))->get()->toArray();
-            $classroom['students'] = User::whereIn('id',json_decode($classroom['students']))->get()->toArray();
-            $classroom['teachers'] = User::whereIn('id',json_decode($classroom['teachers']))->get()->toArray();
-            $classroom['dormitory'] = dormitories::where('id', $classroom['dormitory'])->get()->toArray();
+            $classroom['associatedClasses'] = classes::where('id', $classroom['classes'])->get()->toArray();
+            $classroom['associatedSubjects'] = subject::whereIn('id',json_decode($classroom['subjects']))->get()->toArray();
+            $classroom['associatedStudents'] = User::whereIn('id',json_decode($classroom['students']))->get()->toArray();
+            $classroom['associatedTeachers'] = User::whereIn('id',json_decode($classroom['teachers']))->get()->toArray();
+            $classroom['associatedDormitory'] = dormitories::where('id', $classroom['dormitory'])->get()->toArray();
             $toReturn['classrooms'][$key] = $classroom;
         }
 
@@ -77,42 +77,52 @@ class ClassRoomsController extends \BaseController {
         $classrooms->save();
 
 		$return = $classrooms->toArray();
-        $return['classes'] = classes::where('id', $classrooms['classes'])->get()->toArray();
-        $return['subjects'] = subject::whereIn('id',json_decode($classrooms['subjects']))->get()->toArray();
-        $return['students'] = User::whereIn('id',json_decode($classrooms['students']))->get()->toArray();
-        $return['teachers'] = User::whereIn('id',json_decode($classrooms['teachers']))->get()->toArray();
-        $return['dormitory'] = dormitories::where('id', $classrooms['dormitory'])->get()->toArray();
+        $return['associatedClasses'] = classes::where('id', $classrooms['classes'])->get()->toArray();
+        $return['associatedSubjects'] = subject::whereIn('id',json_decode($classrooms['subjects']))->get()->toArray();
+        $return['associatedStudents'] = User::whereIn('id',json_decode($classrooms['students']))->get()->toArray();
+        $return['associatedTeachers'] = User::whereIn('id',json_decode($classrooms['teachers']))->get()->toArray();
+        $return['associatedDormitory'] = dormitories::where('id', $classrooms['dormitory'])->get()->toArray();
 
 		return $this->panelInit->apiOutput(true,$this->panelInit->language['addClassRoom'],$this->panelInit->language['classRoomCreated'],  $return);
 	}
 
 	function fetch($id){
-		$classDetail = classes::where('id',$id)->first()->toArray();
-		$classDetail['classTeacher'] = json_decode($classDetail['classTeacher']);
-		$classDetail['classSubjects'] = json_decode($classDetail['classSubjects']);
-		return $classDetail;
+		$classrooms = classrooms::where('id',$id)->first()->toArray();
+        $classrooms['associatedClasses'] = classes::where('id', $classrooms['classes'])->get()->toArray();
+        $classrooms['associatedSubjects'] = subject::whereIn('id',json_decode($classrooms['subjects']))->get()->toArray();
+        $classrooms['associatedStudents'] = User::whereIn('id',json_decode($classrooms['students']))->get()->toArray();
+        $classrooms['associatedTeachers'] = User::whereIn('id',json_decode($classrooms['teachers']))->get()->toArray();
+        $classrooms['associatedDormitory'] = dormitories::where('id', $classrooms['dormitory'])->get()->toArray();
+        $classrooms['subjects'] = json_decode($classrooms['subjects']);
+        $classrooms['students'] = json_decode($classrooms['students']);
+        $classrooms['teachers'] = json_decode($classrooms['teachers']);
+		return $classrooms;
 	}
 
 	function edit($id){
 		if($this->data['users']->role != "admin") exit;
 
-		$classes = classes::find($id);
-		$classes->className = Input::get('className');
-		$classes->classTeacher = json_encode(Input::get('classTeacher'));
-		$classes->classSubjects = json_encode(Input::get('classSubjects'));
-		if(Input::has('dormitoryId')){
-			$classes->dormitoryId = Input::get('dormitoryId');
-		}
-		$classes->save();
+		$classrooms = classrooms::find($id);
 
-		$classes->classTeacher = "";
-		$teachersList = User::whereIn('id',Input::get('classTeacher'))->get();
-		foreach ($teachersList as $teacher) {
-			$classes->classTeacher .= $teacher->fullName.", ";
-		}
-		$classes->classSubjects = json_decode($classes->classSubjects);
+        $classrooms->classRoomName = Input::get('classRoomName');
+        $classrooms->classes = Input::get('classes');
+        $classrooms->subjects = json_encode(Input::get('subjects'));
+        $classrooms->students = json_encode(Input::get('students'));
+        $classrooms->teachers = json_encode(Input::get('teachers'));
 
-		return $this->panelInit->apiOutput(true,$this->panelInit->language['editClass'],$this->panelInit->language['classUpdated'],$classes->toArray() );
+        if(Input::has('dormitory')){
+            $classrooms->dormitory = Input::get('dormitory');
+        }
+        $classrooms->save();
+
+        $return = $classrooms->toArray();
+        $return['associatedClasses'] = classes::where('id', $classrooms['classes'])->get()->toArray();
+        $return['associatedSubjects'] = subject::whereIn('id',json_decode($classrooms['subjects']))->get()->toArray();
+        $return['associatedStudents'] = User::whereIn('id',json_decode($classrooms['students']))->get()->toArray();
+        $return['associatedTeachers'] = User::whereIn('id',json_decode($classrooms['teachers']))->get()->toArray();
+        $return['associatedDormitory'] = dormitories::where('id', $classrooms['dormitory'])->get()->toArray();
+
+		return $this->panelInit->apiOutput(true,$this->panelInit->language['editClassRoom'],$this->panelInit->language['classRoomUpdated'], $return);
 	}
 
 }
