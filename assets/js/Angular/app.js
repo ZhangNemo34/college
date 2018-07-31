@@ -408,7 +408,7 @@ schoex.controller('classRoomsController', function(dataFactory,$rootScope,$scope
             dataFactory.httpRequest('classrooms/delete/'+item.id,'POST').then(function(data) {
                 response = apiResponse(data,'remove');
                 if(data.status == "success"){
-                    $scope.classes.splice(index,1);
+                    $scope.classrooms.splice(index,1);
                 }
                 showHideLoad(true);
             });

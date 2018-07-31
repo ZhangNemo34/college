@@ -51,12 +51,12 @@ class ClassRoomsController extends \BaseController {
 	public function delete($id){
 		if($this->data['users']->role != "admin") exit;
 
-		if ( $postDelete = classes::where('id', $id)->first() )
+		if ( $postDelete = classrooms::where('id', $id)->first() )
         {
             $postDelete->delete();
-            return $this->panelInit->apiOutput(true,$this->panelInit->language['delClass'],$this->panelInit->language['classDeleted']);
+            return $this->panelInit->apiOutput(true,$this->panelInit->language['delClassRoom'],$this->panelInit->language['classRoomDeleted']);
         }else{
-            return $this->panelInit->apiOutput(false,$this->panelInit->language['delClass'],$this->panelInit->language['classNotExist']);
+            return $this->panelInit->apiOutput(false,$this->panelInit->language['delClassRoom'],$this->panelInit->language['classRoomNotExist']);
         }
 	}
 

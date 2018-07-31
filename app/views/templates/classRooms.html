@@ -45,10 +45,10 @@
                   </td>
                   <td>
                     <a ng-click="edit(class.id)" type="button" class="btn btn-info btn-flat" title="{{phrase.Edit}}" tooltip><i class="fa fa-pencil"></i></a>
-                    <a ng-click="remove(class,$index)" type="button" class="btn btn-danger btn-flat" title="{{phrase.Remove}}" tooltip><i class="fa fa-trash-o"></i></a>
+                    <a ng-click="remove(classroom,$index)" type="button" class="btn btn-danger btn-flat" title="{{phrase.Remove}}" tooltip><i class="fa fa-trash-o"></i></a>
                   </td>
               </tr>
-              <tr ng-show="classes.length == '0'"><td class="noTableData" colspan="5">{{phrase.NoClasses}}</td></tr>
+              <tr ng-show="classes.length == '0'"><td class="noTableData" colspan="5">{{phrase.NoClassRooms}}</td></tr>
           </tbody></table>
       </div>
   </div>
