@@ -19,19 +19,30 @@
       <div class="box-body table-responsive">
           <table class="table table-hover">
               <tbody><tr>
-                  <th>{{phrase.className}}</th>
-                  <th>{{phrase.classTeacher}}</th>
-                  <th>{{phrase.associatedSubjects}}</th>
-                  <th>{{phrase.classDorm}}</th>
-                  <th>{{phrase.Operations}}</th>
+                  <th>{{phrase.classRoomName}}</th>
+                  <th>{{phrase.class}}</th>
+                  <th>{{phrase.Subject}}</th>
+                  <th>{{phrase.student}}</th>
+                  <th>{{phrase.teacher}}</th>
+                  <th>{{phrase.dormitory}}</th>
               </tr>
-              <tr ng-repeat="class in classes | filter:searchText">
-                  <td>{{class.className}}</td>
-                  <td>{{class.classTeacher}}</td>
+              <tr ng-repeat="classroom in classrooms | filter:searchText">
+                  <td>{{classroom.classRoomName}}</td>
                   <td>
-                      <span ng-repeat="subjectOne in class.classSubjects">{{subject[subjectOne]}}<br/></span>
+                      <span ng-repeat="class in classroom.classes">{{class.className}}<br/></span>
                   </td>
-                  <td>{{class.dormitoryName}}</td>
+                  <td>
+                      <span ng-repeat="subject in classroom.subjects">{{subject.subjectTitle}}<br/></span>
+                  </td>
+                  <td>
+                      <span ng-repeat="student in classroom.students">{{student.fullName}}<br/></span>
+                  </td>
+                  <td>
+                      <span ng-repeat="teacher in classroom.teachers">{{teacher.fullName}}<br/></span>
+                  </td>
+                  <td>
+                      <span ng-repeat="dorm in classroom.dormitory">{{dorm.dormitory}}<br/></span>
+                  </td>
                   <td>
                     <a ng-click="edit(class.id)" type="button" class="btn btn-info btn-flat" title="{{phrase.Edit}}" tooltip><i class="fa fa-pencil"></i></a>
                     <a ng-click="remove(class,$index)" type="button" class="btn btn-danger btn-flat" title="{{phrase.Remove}}" tooltip><i class="fa fa-trash-o"></i></a>
@@ -48,6 +59,12 @@
      <div class="box col-xs-12">
          <div class="box-header">
              <h3 class="box-title">{{phrase.addClassRoom}}</h3>
+             <div class="box-tools">
+                 <div class="input-group">
+                     <input type="text" name="table_search" ng-model="searchStudent" placeholder="{{phrase.SearchStudent}}" class="form-control input-sm">
+                     <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                 </div>
+             </div>
          </div>
          <div class="box-body table-responsive">
              <form class="form-horizontal" name="addDorm" role="form" ng-submit="saveAdd()" novalidate>
@@ -77,7 +94,7 @@
                      <label class="col-sm-2 control-label">{{phrase.associatedStudents}} *</label>
                      <div class="col-sm-10">
                          <select class="form-control" ng-model="form.students" name="students" multiple required>
-                             <option ng-if="students" ng-repeat="student in students" value="{{student.id}}">{{student.fullName}}</option>
+                             <option ng-if="students" ng-repeat="student in students | filter:searchStudent" value="{{student.id}}">{{student.fullName}}</option>
                          </select>
                      </div>
                  </div>

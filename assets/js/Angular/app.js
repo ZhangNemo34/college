@@ -348,6 +348,7 @@ schoex.controller('classesController', function(dataFactory,$rootScope,$scope) {
 });
 
 schoex.controller('classRoomsController', function(dataFactory,$rootScope,$scope,$filter) {
+    $scope.classrooms = {};
     $scope.classes = {};
     $scope.teachers = {};
     $scope.dormitory = {};
@@ -360,6 +361,7 @@ schoex.controller('classRoomsController', function(dataFactory,$rootScope,$scope
     $scope.form = {};
 
     dataFactory.httpRequest('classrooms/listAll').then(function(data) {
+        $scope.classrooms = data.classrooms;
         $scope.classes = data.classes;
         $scope.dormitory = data.dormitory;
         showHideLoad(true);
@@ -392,7 +394,7 @@ schoex.controller('classRoomsController', function(dataFactory,$rootScope,$scope
         dataFactory.httpRequest('classrooms','POST',{},$scope.form).then(function(data) {
             response = apiResponse(data,'add');
             if(data.status == "success"){
-                $scope.classes.push(response);
+                $scope.classrooms.push(response);
                 $scope.changeView('list');
             }
             showHideLoad(true);
